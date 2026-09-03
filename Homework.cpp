@@ -1,20 +1,35 @@
 ﻿#include <iostream>
 #include <string>
+#include <stack>
 
-bool findAndRemove(std::string& str, const std::string& to_remove) {
+bool isBracketSequenceValid(const std::string& str) {
+    std::stack<char> s;
+    for (char ch : str) {
+        if (ch == '{' || ch == '(' || ch == '[') {
+            s.push(ch);
+        }
+        else if (ch == '}' || ch == ')' || ch == ']') {
 
-    size_t pos = str.find(to_remove);
+            if (s.empty()) return false;
 
-    if (pos == std::string::npos) {
-        return false;
+            char top = s.top();
+
+            if ((top == '{' && ch == '}') ||
+                (top == '(' && ch == ')') ||
+                (top == '[' && ch == ']')) {
+                s.pop();
+            }
+            else {
+                return false;
+            }
+        }
     }
-
-    str.erase(pos, to_remove.length());
-    return true;
+    return s.empty();
 }
 
 int main()
 {
+    std::setlocale(LC_ALL, "Russian");
     std::string allowed = "{}()[]";
     std::string str;
 
@@ -25,16 +40,11 @@ int main()
     {
         std::cout << "Неразрешённые символы\n";
     }
-    else {
-        while (true) {
-            bool isFind = false;
-            if (findAndRemove(str, "{}"))  isFind = true; 
-            if (findAndRemove(str, "()"))  isFind = true;
-            if (findAndRemove(str, "[]"))  isFind = true;
-            
-            if (str.empty())        std::cout << "Вс1 хорошо\n"; break;
-
-            if (isFind == false)    std::cout << "Вс1 плохо\n";  break;
-        }
+    else if (isBracketSequenceValid(str))
+    {
+        std::cout << "Всё хорошо\n";
+        return 0;
     }
+    std::cout << "Всё плохо\n";
+    return 0;
 }
