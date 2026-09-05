@@ -1,50 +1,106 @@
 ﻿#include <iostream>
 #include <string>
+#include <vector>
 #include <stack>
+#include <cctype>
+#include <stdexcept>
+#include <sstream>
 
-bool isBracketSequenceValid(const std::string& str) {
-    std::stack<char> s;
-    for (char ch : str) {
-        if (ch == '{' || ch == '(' || ch == '[') {
-            s.push(ch);
-        }
-        else if (ch == '}' || ch == ')' || ch == ']') {
+using namespace std;
 
-            if (s.empty()) return false;
-
-            char top = s.top();
-
-            if ((top == '{' && ch == '}') ||
-                (top == '(' && ch == ')') ||
-                (top == '[' && ch == ']')) {
-                s.pop();
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    return s.empty();
+int getPriority(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
 }
 
-int main()
-{
-    std::setlocale(LC_ALL, "Russian");
-    std::string allowed = "{}()[]";
-    std::string str;
-
-    std::cout << "Введите строку из {}()[]\n";
-    std::getline(std::cin, str);
-
-    if (str.find_first_not_of(allowed) != std::string::npos) 
-    {
-        std::cout << "Неразрешённые символы\n";
+double applyOp(double a, double b, char op) {
+    switch (op) {
+    case '+': return a + b;
+    case '-': return a - b;
+    case '*': return a * b;
+    case '/':
+        if (b == 0) throw runtime_error("Деление на ноль!");
+        return a / b;
+    default: throw runtime_error("Неверный оператор");
     }
-    else if (isBracketSequenceValid(str))
-    {
-        std::cout << "Всё хорошо\n";
-        return 0;
+}
+
+
+double calculation(const string& tokens) {
+    stack<double> values;
+    stack<char> ops;
+
+    for (size_t i = 0; i < tokens.length(); i++) {
+        if (isspace(tokens[i])) continue;
+
+        if (isdigit(tokens[i]) || tokens[i] == '.') {
+            string valStr = "";
+            while (i < tokens.length() && (isdigit(tokens[i]) || tokens[i] == '.')) {
+                valStr += tokens[i++];
+            }
+            values.push(stod(valStr));
+            i--;
+        }
+        else if (tokens[i] == '(') {
+            ops.push(tokens[i]);
+        }
+        else if (tokens[i] == ')') {
+            while (!ops.empty() && ops.top() != '(') {
+                if (values.size() < 2) throw runtime_error("Неверный формат выражения");
+                double val2 = values.top(); values.pop();
+                double val1 = values.top(); values.pop();
+                char op = ops.top(); ops.pop();
+
+                values.push(applyOp(val1, val2, op));
+            }
+            if (!ops.empty()) ops.pop();
+            else throw runtime_error("Пропущена открывающая скобка");
+        }
+        else if (tokens[i] == '+' || tokens[i] == '-' || tokens[i] == '*' || tokens[i] == '/') {
+            while (!ops.empty() && getPriority(ops.top()) >= getPriority(tokens[i])) {
+                if (values.size() < 2) throw runtime_error("Неверный формат выражения");
+                double val2 = values.top(); values.pop();
+                double val1 = values.top(); values.pop();
+                char op = ops.top(); ops.pop();
+
+                values.push(applyOp(val1, val2, op));
+            }
+            ops.push(tokens[i]);
+        }
+        else {
+            throw runtime_error("Недопустимый символ в выражении");
+        }
     }
-    std::cout << "Всё плохо\n";
+
+    while (!ops.empty()) {
+        if (values.size() < 2) throw runtime_error("Неверный формат выражения");
+        double val2 = values.top(); values.pop();
+        double val1 = values.top(); values.pop();
+        char op = ops.top(); ops.pop();
+
+        values.push(applyOp(val1, val2, op));
+    }
+
+    if (values.size() != 1) throw runtime_error("Ошибка при парсинге выражения");
+    return values.top();
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    string expression;
+    std::cin >> expression;
+
+    cout << "Выражение: " << expression << endl;
+
+    try {
+        double result = calculation(expression);
+        cout << "Результат: " << result << endl;
+    }
+    catch (const exception& e) {
+        cerr << "Ошибка: " << e.what() << endl;
+    }
+
     return 0;
 }
