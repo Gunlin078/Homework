@@ -40,6 +40,7 @@ double calculation(const string& tokens) {
                 valStr += tokens[i++];
             }
             values.push(stod(valStr));
+            //В этот момент индекс указывает на символ операции
             i--;
         }
         else if (tokens[i] == '(') {
@@ -50,7 +51,7 @@ double calculation(const string& tokens) {
                 if (values.size() < 2) throw runtime_error("Неверный формат выражения");
                 double val2 = values.top(); values.pop();
                 double val1 = values.top(); values.pop();
-                char op = ops.top(); ops.pop();
+                char     op =    ops.top();    ops.pop();
 
                 values.push(applyOp(val1, val2, op));
             }
@@ -77,7 +78,7 @@ double calculation(const string& tokens) {
         if (values.size() < 2) throw runtime_error("Неверный формат выражения");
         double val2 = values.top(); values.pop();
         double val1 = values.top(); values.pop();
-        char op = ops.top(); ops.pop();
+        char   op   =    ops.top();    ops.pop();
 
         values.push(applyOp(val1, val2, op));
     }
