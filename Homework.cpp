@@ -30,7 +30,7 @@ int main() {
             while (true) {
                 M++;
                 if (fastPow(7, M) >= x) break;
-                if (1) {                                    }////
+                if (fastPow(3, K) * fastPow(5, L) * fastPow(7, M) == x) {                                    }////
             }
         }
     }
