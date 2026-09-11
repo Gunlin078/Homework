@@ -16,7 +16,7 @@ long long fastPow(long long base, int exp) {
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    int x, K, L, M;
+    int x = 0, K = 0, L = 0, M = 0;
     int count = 0;
     std::cin >> x;
     while (true) {
@@ -30,7 +30,7 @@ int main() {
             while (true) {
                 M++;
                 if (fastPow(7, M) >= x) break;
-                if (fastPow(3, K) * fastPow(5, L) * fastPow(7, M) == x) {                                    }////
+                if (fastPow(3, K) * fastPow(5, L) * fastPow(7, M) == x) {  std::cout << x << ", ";  }
             }
         }
     }
