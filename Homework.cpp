@@ -1,12 +1,15 @@
 ﻿#include <iostream>
 #include <string>
 //3k*5l*7m = x
-long long fast_pow(long long base, int exp) {
+long long fastPow(long long base, int exp) {
     long long res = 1;
     while (exp > 0) {
-        if (exp & 1) res *= base;  // Если степень нечетная (проверка младшего бита)
-        base *= base;              // Возводим основание в квадрат
-        exp >>= 1;                 // Делим степень на 2 (сдвиг бита вправо)
+        if (exp & 1) res *= base;  
+
+        if (exp == 1) break;
+
+        base *= base;            
+        exp >>= 1;              
     }
     return res;
 }
@@ -18,16 +21,16 @@ int main() {
     std::cin >> x;
     while (true) {
         K++;
-        if (3**K > x) break;
+        if (fastPow(3, K) > x) break;
 
         while (true) {
             L++;
-            if (L * 5 >= x) break;
+            if (fastPow(5, L) >= x) break;
 
             while (true) {
                 M++;
-                if (M * 7 >= x) break;
-                if (K * 3)
+                if (fastPow(7, M) >= x) break;
+                if (1) {                                    }////
             }
         }
     }
