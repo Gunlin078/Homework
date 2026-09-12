@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <numeric>
 #include <vector>
 //3k*5l*7m = x
 long long fastPow(long long base, int exp) {
@@ -16,36 +17,30 @@ long long fastPow(long long base, int exp) {
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    int x = 0, K = 1, L = 1, M = 1;
-    std::vector<int> resuls;
+    int x = 0;
+    std::vector<int> results;
     std::cin >> x;
+
+    //std::vector<int> xi(x);
+    //std::iota(xi.begin(), xi.end(), 0);
+
 
     int p3 = 1;
     while (p3<=x) {
         int p5 = 1;
-        p3 *= 3;
         while (p3*p5 <= x) {
             int p7 = 1;
-            p5 *= 5;
             while (p3 * p5 * p7 <= x) {
+                results.push_back(p3 * p5 * p7);
                 p7 *= 7;
             }
+            p5 *= 5;
         }
+        p3 *= 3;
     }
-    while (true) {
-        K++;
-        if (fastPow(3, K) > x) break;
-
-        while (true) {
-            L++;
-            if (fastPow(5, L) >= x) break;
-
-            while (true) {
-                M++;
-                if (fastPow(7, M) >= x) break;
-                if (fastPow(3, K) * fastPow(5, L) * fastPow(7, M) == x) {  std::cout << x << ", ";  }
-            }
-        }
+    for (int i : results) {
+        std::cout << i << ", ";
     }
+    
     return 0;
 }
