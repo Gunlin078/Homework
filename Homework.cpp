@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#include <string>
+#include <vector>
 //3k*5l*7m = x
 long long fastPow(long long base, int exp) {
     long long res = 1;
@@ -16,9 +16,22 @@ long long fastPow(long long base, int exp) {
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    int x = 0, K = 0, L = 0, M = 0;
-    int count = 0;
+    int x = 0, K = 1, L = 1, M = 1;
+    std::vector<int> resuls;
     std::cin >> x;
+
+    int p3 = 1;
+    while (p3<=x) {
+        int p5 = 1;
+        p3 *= 3;
+        while (p3*p5 <= x) {
+            int p7 = 1;
+            p5 *= 5;
+            while (p3 * p5 * p7 <= x) {
+                p7 *= 7;
+            }
+        }
+    }
     while (true) {
         K++;
         if (fastPow(3, K) > x) break;
