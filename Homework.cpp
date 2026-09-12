@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-#define ULLONG unsigned long long
+using ULLONG = unsigned long long;
 
 int main() {
     setlocale(LC_ALL, "Russian");
