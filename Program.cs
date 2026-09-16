@@ -1,10 +1,7 @@
 ﻿namespace Homework
 {
     internal class Program
-    {
-        private const double _reductionFactor = 1.247;
-        private static long _blockCount = 0;
-
+    {        
 		static void Main(string[] args)
         {
             Console.WriteLine("Enter numbers-—and only numbers—-separated by spaces");
@@ -15,9 +12,18 @@
                 if (string.IsNullOrWhiteSpace(input))   break;
                 List<int> numbers = [.. input
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => int.Parse(s))];                                 
-                _blockCount = numbers.Count;
+                    .Select(s => int.TryParse(s))];                                 
             }
+        }
+    }
+    class CombSorter 
+    {
+        private static long _step;
+        private static double _reductionFactor = 1.247f;
+        
+        static void CombSort(List<int> numbers)
+        {
+            _step = (long)Math.Round(numbers.Count / _reductionFactor, MidpointRounding.AwayFromZero);
         }
     }
 }
