@@ -3,9 +3,11 @@
     internal class Program
     {
         private const double _reductionFactor = 1.247;
-        static void Main(string[] args)
+        private static long _blockCount = 0;
+
+		static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine("Enter numbers-—and only numbers—-separated by spaces");
             while (true)
             {
                 string? input = Console.ReadLine();
@@ -14,7 +16,7 @@
                 List<int> numbers = [.. input
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                     .Select(s => int.Parse(s))];                                 
-                
+                _blockCount = numbers.Count;
             }
         }
     }
