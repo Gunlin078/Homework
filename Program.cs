@@ -28,25 +28,24 @@
             }
         }
     }
-    class CombSorter 
+    public static class CombSorter 
     {
-        private static long _step;
-        private static long _currentNumber = 0;
-        private static double _reductionFactor = 1.247f;
-        
+
         public static void Swap<T>(this List<T> list, int index1, int index2)
-    {
-        
-        (list[index1], list[index2]) = (list[index2], list[index1]);
-    }
+        {
+            (list[index1], list[index2]) = (list[index2], list[index1]);
+        }
         static void CombSort(List<int> numbers)
         {
-            while (true){
-                _step = (long)Math.Round(numbers.Count / _reductionFactor, MidpointRounding.AwayFromZero);
+            int _step;
+            double _reductionFactor = 1.247;
 
-                for ( long i = 0; i<numbers.Count - 2; i++)
+            while (true){
+                _step = (int)Math.Round(numbers.Count / _reductionFactor, MidpointRounding.AwayFromZero);
+
+                for ( int i = 0; i<numbers.Count - 2; i++)
                 {
-                    if numbers[i] > numbers[i+_step] {}
+                    if (numbers[i] > numbers[i+_step]) {}
                 }
             }
         }
