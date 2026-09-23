@@ -29,22 +29,16 @@
                     .Where( s => !HasExtraCharacters(s))
                     .Select(int.Parse)]; 
             
-            for (int i = 0; i + 1 < numbers.Count; i++)
+            for (int i = 1; i < numbers.Count; i++)
             {
-                int current = numbers[i];
-                if (current > numbers[i+1])
+                int key = numbers[i];
+                int j = i - 1;
+                while (j >= 0 && numbers[j] > key)
                 {
-                    for (int j = 0; j < i; j++)
-                    {
-                        if (current < numbers[j])
-                        {
-                            numbers.RemoveAt(i+1);
-                            numbers.Insert(j, numbers[i+1]);
-                            
-                            break;
-                        }
-                    }
+                    numbers[j + 1] = numbers[j];
+                    j--;
                 }
+                numbers[j + 1] = key;
             }
             
             return numbers;
