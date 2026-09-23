@@ -10,7 +10,7 @@
                 string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input))   break;
-                LinkedList<int> numbers= Sorter.InsertionSort(input);
+                List<int> numbers= Sorter.InsertionSort(input);
 
                 foreach (var n in numbers)
                 {
@@ -22,20 +22,28 @@
     }
     public static class Sorter 
     {
-        public static LinkedList<int> InsertionSort(string input)
+        public static List<int> InsertionSort(string input)
         {
-            LinkedList<int> numbers = [.. input
+            List<int> numbers = [..input
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                     .Where( s => !HasExtraCharacters(s))
-                    .Select(s => int.Parse(s))]; 
-            bool _proceed = true;
+                    .Select(int.Parse)]; 
+            //bool _proceed = true;
             
-            while (_proceed){
-                for (int i = 1; i + 1 < numbers.Count; i++)
+            for (int i = 0; i + 1 < numbers.Count; i++)
+            {
+                if (numbers[i] > numbers[i+1])
                 {
-                    if
-                }    
+                    for (int j = 0; j < numbers[i]; j++)
+                    {
+                        if (numbers[i] > numbers[j])
+                        {
+                            
+                        }
+                    }
+                }
             }
+            
             return numbers;
         }
         private static bool Swap<T>(this List<T> list, int index1, int index2)
@@ -58,7 +66,6 @@
                     return true;
                 }
             }
-
             return false;
         }
     }
