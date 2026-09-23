@@ -28,17 +28,20 @@
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                     .Where( s => !HasExtraCharacters(s))
                     .Select(int.Parse)]; 
-            //bool _proceed = true;
             
             for (int i = 0; i + 1 < numbers.Count; i++)
             {
-                if (numbers[i] > numbers[i+1])
+                int current = numbers[i];
+                if (current > numbers[i+1])
                 {
-                    for (int j = 0; j < numbers[i]; j++)
+                    for (int j = 0; j < i; j++)
                     {
-                        if (numbers[i] > numbers[j])
+                        if (current < numbers[j])
                         {
+                            numbers.RemoveAt(i+1);
+                            numbers.Insert(j, numbers[i+1]);
                             
+                            break;
                         }
                     }
                 }
