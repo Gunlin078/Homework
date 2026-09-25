@@ -10,7 +10,7 @@
                 string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input))   break;
-                List<int> numbers= Sorter.InsertionSort(input);
+                List<int> numbers= Sorter.SelectionSort(input);
 
                 foreach (var n in numbers)
                 {
@@ -22,24 +22,14 @@
     }
     public static class Sorter 
     {
-        public static List<int> InsertionSort(string input)
+        public static List<int> SelectionSort(string input)
         {
             List<int> numbers = [..input
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                     .Where( s => !HasExtraCharacters(s))
                     .Select(int.Parse)]; 
             
-            for (int i = 1; i < numbers.Count; i++)
-            {
-                int key = numbers[i];
-                int j = i - 1;
-                while (j >= 0 && numbers[j] > key)
-                {
-                    numbers[j + 1] = numbers[j];
-                    j--;
-                }
-                numbers[j + 1] = key;
-            }
+
             
             return numbers;
         }
