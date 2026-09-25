@@ -28,26 +28,29 @@ namespace Homework
         {
             List<int> numbers = [..input
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Where( s => !HasExtraCharacters(s))
+                    .Where(s => !HasExtraCharacters(s))
                     .Select(int.Parse)]; 
-            
-            for (int i = 0; i < numbers.Count; i++)
+
+            for (int i = 0; i < numbers.Count - 1; i++)
             {
-                int initial = i+1;
-                int min = numbers[initial];
-                int nMin = initial;
-                for (; initial < numbers.Count; initial++)
+                int nMin = i;
+
+                for (int j = i + 1; j < numbers.Count; j++)
                 {
-                    if (numbers[initial] < numbers[nMin])
+                    if (numbers[j] < numbers[nMin])
                     {
-                        min = numbers[initial];
-                        nMin = initial;
+                        nMin = j;
                     }
                 }
-                numbers.Swap(i, nMin);
+
+                if (nMin != i)
+                {
+                    numbers.Swap(i, nMin);
+                }
             }
             return numbers;
         }
+
         private static bool Swap<T>(this List<T> list, int index1, int index2)
         {
             (list[index1], list[index2]) = (list[index2], list[index1]);
