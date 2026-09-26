@@ -12,7 +12,7 @@ namespace Homework
                 string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input))   break;
-                List<int> numbers= Sorter.SelectionSort(input);
+                List<int> numbers= Sorter.ShellSort(input);
 
                 foreach (var n in numbers)
                 {
@@ -24,18 +24,30 @@ namespace Homework
     }
     public static class Sorter 
     {
-        public static List<int> SelectionSort(string input)
+        public static List<int> ShellSort(string input)
         {
             List<int> numbers = [..input
                     .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                     .Where(s => !HasExtraCharacters(s))
                     .Select(int.Parse)]; 
 
-            for (int i = 0; i < numbers.Count - 1; i++)
+            List<int> d = [1, 4, 10, 23, 57, 132, 301, 701, 1750];
+            int count = numbers.Count;
+
+            if (count > 1750){
+                for (int i = 1750; i < count; i = (int)(i*2.25))
+                {
+                    d.Add(i);
+                }//
+            }
+
+            for (int i = 0; i < count - 1; i++)
             {
                 int nMin = i;
-
-                for (int j = i + 1; j < numbers.Count; j++)
+                int n = d.Count - 1 - i;
+                if (n < 1) {n = 1;}
+                
+                for (int j = i + 1; j < count; j += d[n])
                 {
                     if (numbers[j] < numbers[nMin])
                     {
