@@ -34,32 +34,39 @@ namespace Homework
             List<int> d = [1, 4, 10, 23, 57, 132, 301, 701, 1750];
             int count = numbers.Count;
 
-            if (count > 1750){
-                for (int i = 1750; i < count; i = (int)(i*2.25))
+            if (count > 3937){
+                for (int i = 3937; i < count; i = (int)(i*2.25))
                 {
                     d.Add(i);
-                }//
+                }
             }
-
-            for (int i = 0; i < count - 1; i++)
+            for (int iN = d.Count - 1; iN >= 0; iN--)
             {
-                int nMin = i;
-                int n = d.Count - 1 - i;
-                if (n < 1) {n = 1;}
-                
-                for (int j = i + 1; j < count; j += d[n])
+                int n = d[iN];
+                for (int i = 1; i < numbers.Count; i+=n)
                 {
-                    if (numbers[j] < numbers[nMin])
+                    int key = numbers[i];
+                    int j = i - 1;
+                    while (j >= 0 && numbers[j] > key)
                     {
-                        nMin = j;
+                        numbers[j + 1] = numbers[j];
+                        j--;
                     }
-                }
-
-                if (nMin != i)
-                {
-                    numbers.Swap(i, nMin);
+                    numbers[j + 1] = key;
                 }
             }
+            for (int i = 1; i < numbers.Count; i++)
+            {
+                int key = numbers[i];
+                int j = i - 1;
+                while (j >= 0 && numbers[j] > key)
+                {
+                    numbers[j + 1] = numbers[j];
+                    j--;
+                }
+                numbers[j + 1] = key;
+            }
+
             return numbers;
         }
 
