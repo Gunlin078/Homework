@@ -1,5 +1,26 @@
-﻿using System.Globalization;
+﻿
+namespace Homework
+{
+    internal class Program
+    {        
+		static void Main(string[] args)
+        {
 
+        }
+    }
+    public struct Point2D
+    {
+        public Point2D(double x, double y) => (X, Y) = (x, y);
+        
+        public double X { get; }
+        public double Y { get; }
+
+    }
+}
+
+
+
+/*
 namespace Homework
 {
     internal class Program
@@ -85,3 +106,4 @@ namespace Homework
         }
     }
 }
+*/
