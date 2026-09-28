@@ -43,28 +43,19 @@ namespace Homework
             for (int iN = d.Count - 1; iN >= 0; iN--)
             {
                 int n = d[iN];
-                for (int i = 1; i < numbers.Count; i+=n)
+                
+                for (int i = n; i < numbers.Count; i++)
                 {
                     int key = numbers[i];
-                    int j = i - 1;
-                    while (j >= 0 && numbers[j] > key)
+                    int j = i;
+                    
+                    while (j >= n && numbers[j - n] > key)
                     {
-                        numbers[j + 1] = numbers[j];
-                        j--;
+                        numbers[j] = numbers[j - n];
+                        j -= n;
                     }
-                    numbers[j + 1] = key;
+                    numbers[j] = key;
                 }
-            }
-            for (int i = 1; i < numbers.Count; i++)
-            {
-                int key = numbers[i];
-                int j = i - 1;
-                while (j >= 0 && numbers[j] > key)
-                {
-                    numbers[j + 1] = numbers[j];
-                    j--;
-                }
-                numbers[j + 1] = key;
             }
 
             return numbers;
