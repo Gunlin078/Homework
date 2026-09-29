@@ -10,11 +10,40 @@ namespace Homework
     }
     public struct Point2D
     {
-        public Point2D(double x, double y) => (X, Y) = (x, y);
+        public Point2D(double x, double y)
+        {
+            (X, Y) = (x, y);
+            System.Threading.Interlocked.Increment(ref _instanceCount);
+        }
+
+        public Point2D(Point2D point)
+        {
+            (X, Y) = (point.X, point.Y);
+            System.Threading.Interlocked.Increment(ref _instanceCount);
+        }
+        public static void          CreateNew(out Point2D point)
+        {
+            point = new Point2D(0, 0); 
+            System.Threading.Interlocked.Increment(ref _instanceCount)
+        }
+        public static Point2D       FromPolar(double angleDegrees, double radius)
+        {
+            double radians = angleDegrees * (Math.PI / 180.0);
+            double x = radius * Math.Cos(radians);
+            double y = radius * Math.Sin(radians);
+            return new Point2D(x, y);
+        }
+        public double               DistanceTo(in Point2D point)
+        {
+            double dx = this.X - point.X;
+            double dy = this.Y - point.Y;
+            return Math.Sqrt(dx * dx + dy * dy);        
+        }
+        public (double x, double y) Coordinates()  {  return (X, Y);  }
         
         public double X { get; }
         public double Y { get; }
-
+        private static int _instanceCount = 0;
     }
 }
 
