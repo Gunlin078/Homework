@@ -13,34 +13,48 @@ namespace Homework
         public Point2D(double x, double y)
         {
             (X, Y) = (x, y);
-            System.Threading.Interlocked.Increment(ref _instanceCount);
+            Interlocked.Increment(ref _instanceCount);
         }
-
         public Point2D(Point2D point)
         {
             (X, Y) = (point.X, point.Y);
-            System.Threading.Interlocked.Increment(ref _instanceCount);
+            Interlocked.Increment(ref _instanceCount);
         }
-        public static void          CreateNew(out Point2D point)
+        public static implicit operator Point2D((double x, double y) tuple)
+        {
+            return new Point2D(tuple.x, tuple.y);
+        }
+        public static explicit operator Point2D(double[] array)
+        {
+            if (array is [double x, double y])
+            {
+                return new Point2D(x, y);
+            }
+
+        throw new ArgumentException("The array must be non-null and contain exactly two elements.");
+        }
+        public static void CreateNew(out Point2D point)
         {
             point = new Point2D(0, 0); 
-            System.Threading.Interlocked.Increment(ref _instanceCount)
         }
-        public static Point2D       FromPolar(double angleDegrees, double radius)
+        public static Point2D FromPolar(double angleDegrees, double radius)
         {
             double radians = angleDegrees * (Math.PI / 180.0);
             double x = radius * Math.Cos(radians);
             double y = radius * Math.Sin(radians);
             return new Point2D(x, y);
         }
-        public double               DistanceTo(in Point2D point)
+        public readonly double DistanceTo(in Point2D point)
         {
-            double dx = this.X - point.X;
-            double dy = this.Y - point.Y;
+            double dx = X - point.X;
+            double dy = Y - point.Y;
             return Math.Sqrt(dx * dx + dy * dy);        
         }
-        public (double x, double y) Coordinates()  {  return (X, Y);  }
-        
+        public readonly (double x, double y) Coordinates()  {  return (X, Y);  }
+        public readonly override string ToString()
+        {
+            return $"({X:F2}, {Y:F2})";
+        }
         public double X { get; }
         public double Y { get; }
         private static int _instanceCount = 0;
