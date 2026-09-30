@@ -50,7 +50,12 @@ namespace Homework
             double dy = Y - point.Y;
             return Math.Sqrt(dx * dx + dy * dy);        
         }
-        public readonly (double x, double y) Coordinates()  {  return (X, Y);  }
+        public static double DistanceBetween((double x, double y) p1, (double x, double y) p2)
+        {
+            double dx = p1.x - p2.x;
+            double dy = p1.y - p2.y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
         public readonly override string ToString()
         {
             return $"({X:F2}, {Y:F2})";
