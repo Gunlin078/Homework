@@ -1,7 +1,5 @@
 ﻿namespace Homework
 {
-    
-
     internal class Program
     {        
 		static void Main(string[] args)
@@ -12,7 +10,13 @@
                 string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input))   break;
-                List<int> numbers= Sorter.ShellSort(input);
+                List<int> numbers = Sorter.RadixSort(input);
+                
+                if (numbers.Count == 0)
+                {
+                    Console.WriteLine("No valid numbers found. Try again");
+                    continue;
+                }
 
                 foreach (var n in numbers)
                 {
@@ -24,56 +28,135 @@
     }
     public static class Sorter 
     {
-        static void RadixSort(int[] arr)
+        public static List<int> RadixSort(string input)
+    {
+        // 1. Ручной парсинг в один проход без LINQ для максимальной скорости
+        var segments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        int[] buffer = new int[segments.Length];
+        int count = 0;
+
+        for (int i = 0; i < segments.Length; i++)
         {
-            if (arr.Length == 0) return;
-
-            // Находим максимальное число, чтобы узнать количество разрядов
-            int max = arr[0];
-            for (int i = 1; i < arr.Length; i++)
+            if (!HasExtraCharacters(segments[i]))
             {
-                if (arr[i] > max)
-                    max = arr[i];
-            }
-
-            // Поочередно сортируем по каждому разряду (exp: 1 для единиц, 10 для десятков и т.д.)
-            for (int exp = 1; max / exp > 0; exp *= 10)
-            {
-                CountSort(arr, exp);
+                buffer[count++] = int.Parse(segments[i]);
             }
         }
 
-        static void CountSort(int[] arr, int exp)
+        if (count == 0) return new List<int>();
+
+        // Отрезаем невалидные хвосты, если они были
+        if (count < buffer.Length)
         {
-            int n = arr.Length;
+            Array.Resize(ref buffer, count);
+        }
+
+        // 2. Трансформация знака: инвертируем старший бит (делаем все числа "положительными")
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            buffer[i] ^= unchecked((int)0x80000000);
+        }
+
+        // Вспомогательный массив для стабильной сортировки (аллокация один раз)
+        int[] output = new int[buffer.Length];
+
+        // 3. Побайтовая поразрядная сортировка (4 прохода по 8 бит = 32 бита целого числа)
+        // Массив частот теперь размером 256 (так как в 1 байте 256 возможных значений)
+        int[] counts = new int[256];
+
+        for (int shift = 0; shift < 32; shift += 8)
+        {
+            // Очищаем массив частот
+            Array.Clear(counts, 0, 256);
+
+            // Подсчет вхождений байта
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                int byteValue = (buffer[i] >> shift) & 0xFF;
+                counts[byteValue]++;
+            }
+
+            // Вычисление префиксных сумм (позиций)
+            for (int i = 1; i < 256; i++)
+            {
+                counts[i] += counts[i - 1];
+            }
+
+            // Перенос элементов в выходной массив (идем с конца для стабильности)
+            for (int i = buffer.Length - 1; i >= 0; i--)
+            {
+                int byteValue = (buffer[i] >> shift) & 0xFF;
+                output[counts[byteValue] - 1] = buffer[i];
+                counts[byteValue]--;
+            }
+
+            // Меняем массивы местами (без лишнего копирования)
+            int[] temp = buffer;
+            buffer = output;
+            output = temp;
+        }
+
+        // 4. Обратная трансформация знака (возвращаем минусы на место)
+        List<int> result = new List<int>(buffer.Length);
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            buffer[i] ^= unchecked((int)0x80000000);
+            result.Add(buffer[i]);
+        }
+
+        return result;
+        }
+
+        public static bool HasExtraCharacters(string input)
+        {
+            if (input.Length == 0) return true;
+            
+            int start = 0;
+            if (input[0] == '-')
+            {
+                if (input.Length == 1) return true; // Одиночный минус — не число
+                start = 1;
+            }
+
+            for (int i = start; i < input.Length; i++)
+            {
+                char c = input[i];
+                if (c < '0' || c > '9')
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        static void CountSort(List<int> list, int exp)
+        {
+            int n = list.Count;
             int[] output = new int[n];
             int[] count = new int[10];
 
-            // Сохраняем количество вхождений цифр в текущем разряде
             for (int i = 0; i < n; i++)
             {
-                int digit = (arr[i] / exp) % 10;
+                int digit = (list[i] / exp) % 10;
                 count[digit]++;
             }
 
-            // Изменяем count[i] так, чтобы он содержал позиции элементов в output
             for (int i = 1; i < 10; i++)
             {
                 count[i] += count[i - 1];
             }
 
-            // Строим выходной отсортированный массив
             for (int i = n - 1; i >= 0; i--)
             {
-                int digit = (arr[i] / exp) % 10;
-                output[count[digit] - 1] = arr[i];
+                int digit = (list[i] / exp) % 10;
+                output[count[digit] - 1] = list[i];
                 count[digit]--;
             }
 
-            // Копируем обратно в исходный массив
+            // Перезаписываем элементы в исходном List
             for (int i = 0; i < n; i++)
             {
-                arr[i] = output[i];
+                list[i] = output[i];
             }
         }
 
@@ -81,23 +164,6 @@
         {
             (list[index1], list[index2]) = (list[index2], list[index1]);
             return true;
-        }
-        public static bool HasExtraCharacters(string input)
-        {
-            ReadOnlySpan<char> span = input.AsSpan();
-
-            for (int i = 0; i < span.Length; i++)
-            {
-                char c = span[i];
-
-                if (i == 0 && c == '-') continue;
-
-                if (c != ' ' && (c < '0' || c > '9'))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }
