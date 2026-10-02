@@ -1,56 +1,4 @@
-﻿
-namespace Homework
-{
-    internal class Program
-    {        
-		static void Main(string[] args)
-        {
-
-        }
-    }
-    public struct Point2D
-    {
-        public Point2D(double x, double y)
-        {
-            (X, Y) = (x, y);
-            System.Threading.Interlocked.Increment(ref _instanceCount);
-        }
-
-        public Point2D(Point2D point)
-        {
-            (X, Y) = (point.X, point.Y);
-            System.Threading.Interlocked.Increment(ref _instanceCount);
-        }
-        public static void          CreateNew(out Point2D point)
-        {
-            point = new Point2D(0, 0); 
-            System.Threading.Interlocked.Increment(ref _instanceCount)
-        }
-        public static Point2D       FromPolar(double angleDegrees, double radius)
-        {
-            double radians = angleDegrees * (Math.PI / 180.0);
-            double x = radius * Math.Cos(radians);
-            double y = radius * Math.Sin(radians);
-            return new Point2D(x, y);
-        }
-        public double               DistanceTo(in Point2D point)
-        {
-            double dx = this.X - point.X;
-            double dy = this.Y - point.Y;
-            return Math.Sqrt(dx * dx + dy * dy);        
-        }
-        public (double x, double y) Coordinates()  {  return (X, Y);  }
-        
-        public double X { get; }
-        public double Y { get; }
-        private static int _instanceCount = 0;
-    }
-}
-
-
-
-/*
-namespace Homework
+﻿namespace Homework
 {
     internal class Program
     {        
@@ -74,42 +22,58 @@ namespace Homework
     }
     public static class Sorter 
     {
-        public static List<int> ShellSort(string input)
+        static void RadixSort(int[] arr)
+    {
+        if (arr.Length == 0) return;
+
+        // Находим максимальное число, чтобы узнать количество разрядов
+        int max = arr[0];
+        for (int i = 1; i < arr.Length; i++)
         {
-            List<int> numbers = [..input
-                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Where(s => !HasExtraCharacters(s))
-                    .Select(int.Parse)]; 
-
-            List<int> d = [1, 4, 10, 23, 57, 132, 301, 701, 1750];
-            int count = numbers.Count;
-
-            if (count > 3937){
-                for (int i = 3937; i < count; i = (int)(i*2.25))
-                {
-                    d.Add(i);
-                }
-            }
-            for (int iN = d.Count - 1; iN >= 0; iN--)
-            {
-                int n = d[iN];
-                
-                for (int i = n; i < numbers.Count; i++)
-                {
-                    int key = numbers[i];
-                    int j = i;
-                    
-                    while (j >= n && numbers[j - n] > key)
-                    {
-                        numbers[j] = numbers[j - n];
-                        j -= n;
-                    }
-                    numbers[j] = key;
-                }
-            }
-
-            return numbers;
+            if (arr[i] > max)
+                max = arr[i];
         }
+
+        // Поочередно сортируем по каждому разряду (exp: 1 для единиц, 10 для десятков и т.д.)
+        for (int exp = 1; max / exp > 0; exp *= 10)
+        {
+            CountSort(arr, exp);
+        }
+    }
+
+    static void CountSort(int[] arr, int exp)
+    {
+        int n = arr.Length;
+        int[] output = new int[n];
+        int[] count = new int[10];
+
+        // Сохраняем количество вхождений цифр в текущем разряде
+        for (int i = 0; i < n; i++)
+        {
+            int digit = (arr[i] / exp) % 10;
+            count[digit]++;
+        }
+
+        // Изменяем count[i] так, чтобы он содержал позиции элементов в output
+        for (int i = 1; i < 10; i++)
+        {
+            count[i] += count[i - 1];
+        }
+
+        // Строим выходной отсортированный массив
+        for (int i = n - 1; i >= 0; i--)
+        {
+            int digit = (arr[i] / exp) % 10;
+            output[count[digit] - 1] = arr[i];
+            count[digit]--;
+        }
+
+        // Копируем обратно в исходный массив
+        for (int i = 0; i < n; i++)
+        {
+            arr[i] = output[i];
+        }
+    }
 
         private static bool Swap<T>(this List<T> list, int index1, int index2)
         {
@@ -135,4 +99,3 @@ namespace Homework
         }
     }
 }
-*/
