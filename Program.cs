@@ -1,5 +1,7 @@
 ﻿namespace Homework
 {
+    
+
     internal class Program
     {        
 		static void Main(string[] args)
@@ -23,57 +25,57 @@
     public static class Sorter 
     {
         static void RadixSort(int[] arr)
-    {
-        if (arr.Length == 0) return;
-
-        // Находим максимальное число, чтобы узнать количество разрядов
-        int max = arr[0];
-        for (int i = 1; i < arr.Length; i++)
         {
-            if (arr[i] > max)
-                max = arr[i];
+            if (arr.Length == 0) return;
+
+            // Находим максимальное число, чтобы узнать количество разрядов
+            int max = arr[0];
+            for (int i = 1; i < arr.Length; i++)
+            {
+                if (arr[i] > max)
+                    max = arr[i];
+            }
+
+            // Поочередно сортируем по каждому разряду (exp: 1 для единиц, 10 для десятков и т.д.)
+            for (int exp = 1; max / exp > 0; exp *= 10)
+            {
+                CountSort(arr, exp);
+            }
         }
 
-        // Поочередно сортируем по каждому разряду (exp: 1 для единиц, 10 для десятков и т.д.)
-        for (int exp = 1; max / exp > 0; exp *= 10)
+        static void CountSort(int[] arr, int exp)
         {
-            CountSort(arr, exp);
-        }
-    }
+            int n = arr.Length;
+            int[] output = new int[n];
+            int[] count = new int[10];
 
-    static void CountSort(int[] arr, int exp)
-    {
-        int n = arr.Length;
-        int[] output = new int[n];
-        int[] count = new int[10];
+            // Сохраняем количество вхождений цифр в текущем разряде
+            for (int i = 0; i < n; i++)
+            {
+                int digit = (arr[i] / exp) % 10;
+                count[digit]++;
+            }
 
-        // Сохраняем количество вхождений цифр в текущем разряде
-        for (int i = 0; i < n; i++)
-        {
-            int digit = (arr[i] / exp) % 10;
-            count[digit]++;
-        }
+            // Изменяем count[i] так, чтобы он содержал позиции элементов в output
+            for (int i = 1; i < 10; i++)
+            {
+                count[i] += count[i - 1];
+            }
 
-        // Изменяем count[i] так, чтобы он содержал позиции элементов в output
-        for (int i = 1; i < 10; i++)
-        {
-            count[i] += count[i - 1];
-        }
+            // Строим выходной отсортированный массив
+            for (int i = n - 1; i >= 0; i--)
+            {
+                int digit = (arr[i] / exp) % 10;
+                output[count[digit] - 1] = arr[i];
+                count[digit]--;
+            }
 
-        // Строим выходной отсортированный массив
-        for (int i = n - 1; i >= 0; i--)
-        {
-            int digit = (arr[i] / exp) % 10;
-            output[count[digit] - 1] = arr[i];
-            count[digit]--;
+            // Копируем обратно в исходный массив
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = output[i];
+            }
         }
-
-        // Копируем обратно в исходный массив
-        for (int i = 0; i < n; i++)
-        {
-            arr[i] = output[i];
-        }
-    }
 
         private static bool Swap<T>(this List<T> list, int index1, int index2)
         {
