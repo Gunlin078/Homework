@@ -30,7 +30,6 @@
     {
         public static List<int> RadixSort(string input)
     {
-        // 1. Ручной парсинг в один проход без LINQ для максимальной скорости
         var segments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         int[] buffer = new int[segments.Length];
         int count = 0;
