@@ -8,6 +8,9 @@ namespace Homework
 
         }
     }
+
+
+
     public struct Point3D
     {
         public Point3D(double x, double y, double z)
@@ -21,9 +24,8 @@ namespace Homework
             Interlocked.Increment(ref _instanceCount);
         }
         public static implicit operator Point3D((double x, double y, double z) tuple)
-        {
-            return new Point3D(tuple.x, tuple.y, tuple.z);
-        }
+            => new(tuple.x, tuple.y, tuple.z);
+
         public static explicit operator Point3D(double[] array)
         {
             if (array is [double x, double y, double z])
@@ -54,7 +56,7 @@ namespace Homework
             double dx = X - point.X;
             double dy = Y - point.Y;
             double dz = Z - point.Z;
-            return Math.Sqrt(dx * dx + dy * dy);        
+            return Math.Sqrt(dx * dx + dy * dy +  dz * dz);        
         }
         public static double DistanceBetween((double x, double y, double z) p1, (double x, double y, double z) p2)
         {
@@ -71,5 +73,87 @@ namespace Homework
         public double Y { get; }
         public double Z { get; }
         private static int _instanceCount = 0;
+    }
+
+    public struct Vector3D
+    {
+        public Vector3D(double x, double y, double z)
+        {
+            (X, Y, Z) = (x, y, z);
+            Interlocked.Increment(ref _instanceCount);
+        }
+        public Vector3D(Vector3D point)
+        {
+            (X, Y, Z) = (point.X, point.Y, point.Z);
+            Interlocked.Increment(ref _instanceCount);
+        }
+        public static implicit operator Vector3D((double x, double y, double z) tuple)
+            => new(tuple.x, tuple.y, tuple.z);
+
+        public static explicit operator Vector3D(double[] array)
+        {
+            if (array is [double x, double y, double z])
+            {
+                return new Vector3D(x, y, z);
+            }
+
+        throw new ArgumentException("The array must be non-null and contain exactly two elements.");
+        }
+        public static void CreateNew(out Vector3D point)
+        {
+            point = new Vector3D(0, 0, 0); 
+        }
+        public static Vector3D FromPoints(Point3D start, Point3D end)
+        {
+            double dx = end.X - start.X;
+            double dy = end.Y - start.Y;
+            double dz = end.Z - start.Z;
+            return new Vector3D(dx, dy, dz);
+        }
+
+        //                  ARITHMETIC OPERATORS
+
+        public static Vector3D operator +(Vector3D a, Vector3D b) { return new Vector3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z); }
+        public static Vector3D operator -(Vector3D a, Vector3D b) { return new Vector3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z); }
+        public static Vector3D operator *(Vector3D a, Vector3D b) { return new Vector3D(a.X * b.X, a.Y * b.Y, a.Z * b.Z); }
+        public static Vector3D operator /(Vector3D a, Vector3D b) { return new Vector3D(a.X / b.X, a.Y / b.Y, a.Z / b.Z); }
+
+        public static Vector3D operator *(Vector3D a, double scalar) { return new Vector3D(a.X * scalar, a.Y * scalar, a.Z * scalar); }
+        public static Vector3D operator *(double scalar, Vector3D a) { return new Vector3D(a.X * scalar, a.Y * scalar, a.Z * scalar); }
+        public static Vector3D operator /(Vector3D a, double scalar) { return new Vector3D(a.X / scalar, a.Y / scalar, a.Z / scalar); }
+        public static Vector3D operator -(Vector3D a) { return new Vector3D(-a.X, -a.Y, -a.Z); }
+
+
+        //                  COMPARISON OPERATORS
+
+        public static bool operator ==(Vector3D a, Vector3D b)
+        {
+            const double epsilon = 0.000001;
+            return Math.Abs(a.X - b.X) < epsilon && Math.Abs(a.Y - b.Y) < epsilon && Math.Abs(a.Z - b.Z) < epsilon;
+        }
+
+        public static bool operator !=(Vector3D a, Vector3D b)
+        {
+            return !(a == b);
+        }
+
+        public static bool operator >(Vector3D a, Vector3D b)
+        {
+            return (a.X * a.X + a.Y * a.Y + a.Z * a.Z) > (b.X * b.X + b.Y * b.Y + b.Z * b.Z);
+        }
+
+        public static bool operator <(Vector3D a, Vector3D b)
+        {
+            return (a.X * a.X + a.Y * a.Y + a.Z * a.Z) < (b.X * b.X + b.Y * b.Y + b.Z * b.Z);
+        }
+
+
+        //                  STORED DATA
+
+        public double X { get; }
+        public double Y { get; }
+        public double Z { get; }
+        private static int _instanceCount = 0;
+
     }
 }
