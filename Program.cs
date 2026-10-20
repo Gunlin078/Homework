@@ -44,44 +44,35 @@
 
             if (count == 0) return new List<int>();
 
-            // Отрезаем невалидные хвосты, если они были
-            if (count < buffer.Length)
+            if (count < buffer.Length) //обрезка
             {
                 Array.Resize(ref buffer, count);
             }
 
-            // 2. Трансформация знака: инвертируем старший бит (делаем все числа "положительными")
             for (int i = 0; i < buffer.Length; i++)
             {
-                buffer[i] ^= unchecked((int)0x80000000);
+                buffer[i] ^= int.MinValue;
             }
 
-            // Вспомогательный массив для стабильной сортировки (аллокация один раз)
             int[] output = new int[buffer.Length];
 
-            // 3. Побайтовая поразрядная сортировка (4 прохода по 8 бит = 32 бита целого числа)
-            // Массив частот теперь размером 256 (так как в 1 байте 256 возможных значений)
             int[] counts = new int[256];
 
             for (int shift = 0; shift < 32; shift += 8)
             {
-                // Очищаем массив частот
                 Array.Clear(counts, 0, 256);
 
-                // Подсчет вхождений байта
                 for (int i = 0; i < buffer.Length; i++)
                 {
                     int byteValue = (buffer[i] >> shift) & 0xFF;
                     counts[byteValue]++;
                 }
 
-                // Вычисление префиксных сумм (позиций)
                 for (int i = 1; i < 256; i++)
                 {
                     counts[i] += counts[i - 1];
                 }
 
-                // Перенос элементов в выходной массив (идем с конца для стабильности)
                 for (int i = buffer.Length - 1; i >= 0; i--)
                 {
                     int byteValue = (buffer[i] >> shift) & 0xFF;
@@ -89,17 +80,15 @@
                     counts[byteValue]--;
                 }
 
-                // Меняем массивы местами (без лишнего копирования)
                 int[] temp = buffer;
                 buffer = output;
                 output = temp;
             }
 
-            // 4. Обратная трансформация знака (возвращаем минусы на место)
             List<int> result = new List<int>(buffer.Length);
-            for (int i = 0; i < buffer.Length; i++)
+            for (int i = 0; i < buffer.Length; i++) //возврат минусов
             {
-                buffer[i] ^= unchecked((int)0x80000000);
+                buffer[i] ^= int.MinValue;
                 result.Add(buffer[i]);
             }
 
