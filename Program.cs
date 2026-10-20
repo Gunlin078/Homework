@@ -75,6 +75,7 @@ namespace Homework
         private static int _instanceCount = 0;
     }
 
+
     public struct Vector3D
     {
         public Vector3D(double x, double y, double z)
@@ -145,6 +146,23 @@ namespace Homework
         public static bool operator <(Vector3D a, Vector3D b)
         {
             return (a.X * a.X + a.Y * a.Y + a.Z * a.Z) < (b.X * b.X + b.Y * b.Y + b.Z * b.Z);
+        }
+
+        public readonly override bool Equals(object? obj)
+        {
+            if (obj is Vector3D other)
+            {
+                const double epsilon = 0.000001;
+                return  Math.Abs(X - other.X) < epsilon &&
+                        Math.Abs(Y - other.Y) < epsilon &&
+                        Math.Abs(Z - other.Z) < epsilon;
+            }
+            return false;
+        }
+
+        public readonly override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y, Z);
         }
 
 
