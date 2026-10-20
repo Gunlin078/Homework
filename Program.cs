@@ -1,126 +1,75 @@
-﻿namespace Homework
+﻿﻿
+namespace Homework
 {
     internal class Program
     {        
 		static void Main(string[] args)
         {
-            Console.WriteLine("Enter numbers-—and only numbers—-separated by spaces");
-            while (true)
-            {
-                string? input = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(input))   break;
-                List<int> numbers = Sorter.RadixSort(input);
-                
-                if (numbers.Count == 0)
-                {
-                    Console.WriteLine("No valid numbers found. Try again");
-                    continue;
-                }
-
-                foreach (var n in numbers)
-                {
-                    Console.Write(n + " "); 
-                }
-                Console.WriteLine();
-            }
         }
     }
-    public static class Sorter 
+    public struct Point3D
     {
-        public static List<int> RadixSort(string input)
+        public Point3D(double x, double y, double z)
         {
-            var segments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            int[] buffer = new int[segments.Length];
-            int count = 0;
-
-            for (int i = 0; i < segments.Length; i++)
+            (X, Y, Z) = (x, y, z);
+            Interlocked.Increment(ref _instanceCount);
+        }
+        public Point3D(Point3D point)
+        {
+            (X, Y, Z) = (point.X, point.Y, point.Z);
+            Interlocked.Increment(ref _instanceCount);
+        }
+        public static implicit operator Point3D((double x, double y, double z) tuple)
+        {
+            return new Point3D(tuple.x, tuple.y, tuple.z);
+        }
+        public static explicit operator Point3D(double[] array)
+        {
+            if (array is [double x, double y, double z])
             {
-                if (!HasExtraCharacters(segments[i]))
-                {
-                    buffer[count++] = int.Parse(segments[i]);
-                }
+                return new Point3D(x, y, z);
             }
 
-            if (count == 0) return new List<int>();
+        throw new ArgumentException("The array must be non-null and contain exactly two elements.");
+        }
+        public static void CreateNew(out Point3D point)
+        {
+            point = new Point3D(0, 0, 0); 
+        }
+        public static Point3D FromPolar(double r, double thetaDegrees, double phiDegrees)
+        {
+            double thetaRadians = thetaDegrees * (Math.PI / 180.0);
+            double phiRadians = phiDegrees * (Math.PI / 180.0);
 
-            if (count < buffer.Length) //обрезка
-            {
-                Array.Resize(ref buffer, count);
-            }
+            double x = r * Math.Cos(phiRadians) * Math.Cos(thetaRadians);
+            double y = r * Math.Cos(phiRadians) * Math.Sin(thetaRadians);
+            double z = r * Math.Sin(phiRadians);
 
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                buffer[i] ^= int.MinValue;
-            }
-
-            int[] output = new int[buffer.Length];
-
-            int[] counts = new int[256];
-
-            for (int shift = 0; shift < 32; shift += 8)
-            {
-                Array.Clear(counts, 0, 256);
-
-                for (int i = 0; i < buffer.Length; i++)
-                {
-                    int byteValue = (buffer[i] >> shift) & 0xFF;
-                    counts[byteValue]++;
-                }
-
-                for (int i = 1; i < 256; i++)
-                {
-                    counts[i] += counts[i - 1];
-                }
-
-                for (int i = buffer.Length - 1; i >= 0; i--)
-                {
-                    int byteValue = (buffer[i] >> shift) & 0xFF;
-                    output[counts[byteValue] - 1] = buffer[i];
-                    counts[byteValue]--;
-                }
-
-                int[] temp = buffer;
-                buffer = output;
-                output = temp;
-            }
-
-            List<int> result = new List<int>(buffer.Length);
-            for (int i = 0; i < buffer.Length; i++) //возврат минусов
-            {
-                buffer[i] ^= int.MinValue;
-                result.Add(buffer[i]);
-            }
-
-            return result;
+            return new Point3D(x, y, z);
         }
 
-        public static bool HasExtraCharacters(string input)
+        public readonly double DistanceTo(in Point3D point)
         {
-            if (input.Length == 0) return true;
-            
-            int start = 0;
-            if (input[0] == '-')
-            {
-                if (input.Length == 1) return true;
-                start = 1;
-            }
-
-            for (int i = start; i < input.Length; i++)
-            {
-                char c = input[i];
-                if (c < '0' || c > '9')
-                {
-                    return true;
-                }
-            }
-            return false;
+            double dx = X - point.X;
+            double dy = Y - point.Y;
+            double dz = Z - point.Z;
+            return Math.Sqrt(dx * dx + dy * dy);        
         }
-
-        private static bool Swap<T>(this List<T> list, int index1, int index2)
+        public static double DistanceBetween((double x, double y, double z) p1, (double x, double y, double z) p2)
         {
-            (list[index1], list[index2]) = (list[index2], list[index1]);
-            return true;
+            double dx = p1.x - p2.x;
+            double dy = p1.y - p2.y;
+            double dz = p1.z - p2.z;
+            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
+        public readonly override string ToString()
+        {
+            return $"({X:F2}, {Y:F2}, {Z:F2})";
+        }
+        public double X { get; }
+        public double Y { get; }
+        public double Z { get; }
+        private static int _instanceCount = 0;
     }
 }
