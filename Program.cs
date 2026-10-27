@@ -8,8 +8,12 @@ namespace Homework
             var a = new Vector3D(1, 5, 9);
             var b = new Vector3D(0,0,0);
             Console.WriteLine( (a/b).ToString() );
-            Console.WriteLine( (a/0).ToString() );
-            Console.WriteLine( (a/2.1).ToString() );
+            //Console.WriteLine( (a/0).ToString() );
+            //Console.WriteLine( (a/2.1).ToString() );
+
+            b+=a*2;
+
+            Console.WriteLine( b.ToString() );
             Console.WriteLine( a.ToString() );
 
 
@@ -138,13 +142,14 @@ namespace Homework
 
         public static Vector3D operator /(Vector3D a, Vector3D b) =>
             new (
-                b.X == 0 ? 0 : a.X / b.X,
-                b.Y == 0 ? 0 : a.Y / b.Y,
-                b.Z == 0 ? 0 : a.Z / b.Z
+                b.X == 0 ? throw new DivideByZeroException("Dividing by 0 is bad!") : a.X / b.X,
+                b.Y == 0 ? throw new DivideByZeroException("Dividing by 0 is bad!") : a.Y / b.Y,
+                b.Z == 0 ? throw new DivideByZeroException("Dividing by 0 is bad!") : a.Z / b.Z
             );
 
 
         //                  COMPARISON OPERATORS
+
 
         public static bool operator ==(Vector3D a, Vector3D b)
         {
@@ -179,6 +184,16 @@ namespace Homework
             return false;
         }
 
+        //                      INDEX
+       public readonly double this[int index] => index switch
+        {
+            0 => X,
+            1 => Y,
+            2 => Z,
+            _ => throw new ArgumentOutOfRangeException(nameof(index))
+        };
+
+        //                      OTHER
         public readonly override string ToString()
         {
             return $"({X:F2}, {Y:F2}, {Z:F2})";
@@ -191,6 +206,7 @@ namespace Homework
 
 
         //                  STORED DATA
+
 
         public double X { get; }
         public double Y { get; }
