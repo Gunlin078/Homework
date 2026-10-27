@@ -89,6 +89,7 @@ namespace Homework
 
     public struct Vector3D
     {
+        //                          CONSTRUCTORS
         public Vector3D(double x, double y, double z)
         {
             (X, Y, Z) = (x, y, z);
@@ -123,7 +124,7 @@ namespace Homework
             return new Vector3D(dx, dy, dz);
         }
 
-        //                  ARITHMETIC OPERATORS
+        //                          ARITHMETIC OPERATORS
 
         public static Vector3D operator +(Vector3D a, Vector3D b) { return new Vector3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z); }
         public static Vector3D operator -(Vector3D a, Vector3D b) { return new Vector3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z); }
@@ -148,7 +149,7 @@ namespace Homework
             );
 
 
-        //                  COMPARISON OPERATORS
+        //                          COMPARISON OPERATORS
 
 
         public static bool operator ==(Vector3D a, Vector3D b)
@@ -184,7 +185,10 @@ namespace Homework
             return false;
         }
 
-        //                      ENUMERATIONS
+
+        //                          ENUMERATIONS
+
+
         public readonly double this[int index] => index switch
         {
             0 => X,
@@ -199,8 +203,42 @@ namespace Homework
             return new[] { X, Y, Z }.AsSpan().GetEnumerator();
         }
 
+        //                          GEOMETRIC
 
-        //                      OTHER
+        public readonly double Len()
+        {
+            return Math.Sqrt(X*X + Y*Y + Z*Z);
+        }
+
+        public static bool IsCollinear(Vector3D a, Vector3D b)
+        {
+            double crossX = a.Y * b.Z - a.Z * b.Y;
+            double crossY = a.Z * b.X - a.X * b.Z;
+            double crossZ = a.X * b.Y - a.Y * b.X;
+
+            double crossLengthSquared = crossX * crossX + crossY * crossY + crossZ * crossZ;
+
+            const double epsilon = 1e-10; 
+
+            return crossLengthSquared < epsilon;
+        }
+
+        public static bool IsCoplanar(Vector3D a, Vector3D b, Vector3D c)
+        {
+            double crossX = a.Y * b.Z - a.Z * b.Y;
+            double crossY = a.Z * b.X - a.X * b.Z;
+            double crossZ = a.X * b.Y - a.Y * b.X;
+
+            double mixedProduct = crossX * c.X + crossY * c.Y + crossZ * c.Z;
+
+            const double epsilon = 1e-10;
+            return Math.Abs(mixedProduct) < epsilon;
+        }
+
+
+        //                          OTHER
+
+
         public readonly override string ToString()
         {
             return $"({X:F2}, {Y:F2}, {Z:F2})";
@@ -212,13 +250,12 @@ namespace Homework
         }
 
 
-        //                  STORED DATA
+        //                          STORED DATA
 
 
         public double X { get; init; }
         public double Y { get; init; }
         public double Z { get; init; }
         private static int _instanceCount = 0;
-
     }
 }
