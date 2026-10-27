@@ -185,7 +185,7 @@ namespace Homework
         }
 
         //                      INDEX
-       public readonly double this[int index] => index switch
+        public readonly double this[int index] => index switch
         {
             0 => X,
             1 => Y,
@@ -208,9 +208,9 @@ namespace Homework
         //                  STORED DATA
 
 
-        public double X { get; }
-        public double Y { get; }
-        public double Z { get; }
+        public double X { get; init; }
+        public double Y { get; init; }
+         public double Z { get; init; }
         private static int _instanceCount = 0;
 
     }
