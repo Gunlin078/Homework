@@ -184,7 +184,7 @@ namespace Homework
             return false;
         }
 
-        //                      INDEX
+        //                      ENUMERATIONS
         public readonly double this[int index] => index switch
         {
             0 => X,
@@ -192,6 +192,13 @@ namespace Homework
             2 => Z,
             _ => throw new ArgumentOutOfRangeException(nameof(index))
         };
+
+        // Warning: not the best implementation; creates unnecessary memory clutter
+        public readonly Span<double>.Enumerator GetEnumerator()
+        {
+            return new[] { X, Y, Z }.AsSpan().GetEnumerator();
+        }
+
 
         //                      OTHER
         public readonly override string ToString()
@@ -210,7 +217,7 @@ namespace Homework
 
         public double X { get; init; }
         public double Y { get; init; }
-         public double Z { get; init; }
+        public double Z { get; init; }
         private static int _instanceCount = 0;
 
     }
