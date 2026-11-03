@@ -46,40 +46,33 @@
 
             if (n == 0) return new List<int>();
 
-            // Построение кучи (перегруппируем массив)
             for (int i = n / 2 - 1; i >= 0; i--)
                 Heapify(array, n, i);
 
-            // Поочередно извлекаем элементы из кучи
             for (int i = n - 1; i > 0; i--)
             {
-                // Перемещаем текущий корень в конец
                 int temp = array[0];
                 array[0] = array[i];
                 array[i] = temp;
 
-                // Вызываем heapify на уменьшенной куче
                 Heapify(array, i, 0);
             }
             return array;
         }
 
-        // Преобразование в двоичную кучу с корнем в индексе i
         private static void Heapify(List<int> array, int heapSize, int rootIndex)
         {
             int largest = rootIndex;
-            int left = 2 * rootIndex + 1;  // Левый дочерний элемент
+            int left  = 2 * rootIndex + 1; // Левый дочерний элемент
             int right = 2 * rootIndex + 2; // Правый дочерний элемент
 
-            // Если левый дочерний элемент больше корня
+            // Если дочерние элемент больше корня
             if (left < heapSize && array[left] > array[largest])
                 largest = left;
 
-            // Если правый дочерний элемент больше, чем самый большой элемент на данный момент
             if (right < heapSize && array[right] > array[largest])
                 largest = right;
 
-            // Если самый большой элемент не корень
             if (largest != rootIndex)
             {
                 int swap = array[rootIndex];
